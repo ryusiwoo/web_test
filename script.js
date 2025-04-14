@@ -14,6 +14,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 console.log("Firebase 초기화 완료:", app);
+console.log(typeof firebase); // "object"가 출력되어야 정상입니다.
 
 // 댓글 추가 함수
 const addComment = (text) => {
