@@ -3,18 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase 댓글 작성</title>
-  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database.js"></script>
+  <title>Supabase Comments</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #comments { margin-top: 20px; }
+    .comment { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+  </style>
 </head>
 <body>
-  <h1>댓글 작성 연습</h1>
+  <h1>댓글 시스템 (Supabase)</h1>
   <form id="commentForm">
-    <textarea id="commentInput" placeholder="댓글을 작성하세요"></textarea><br>
-    <button type="submit">댓글 작성</button>
+    <textarea id="commentInput" placeholder="댓글을 입력하세요" required></textarea>
+    <br>
+    <button type="submit">댓글 추가</button>
   </form>
-  <ul id="commentList"></ul>
+  <div id="comments"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    // Supabase 초기화
+    const supabase = createClient('YOUR_PROJECT_URL', 'YOUR_ANON_KEY');
 
-  <script src="script.js"></script>
+    // 댓글 추가
+    const commentForm = document.getElementById('commentForm');
+    const commentInput = document.getElementById('commentInput');
+    const commentsDiv = document.getElementById('comments');
+
+    commentForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const comment = commentInput.value;
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([{ content: comment }]);
+      if (error) console.error(error);
+      commentInput.value = '';
+      loadComments();
+    });
+
+    // 댓글 불러오기
+    async function loadComments() {
+      const { data: comments, error } = await supabase
+        .from('comments')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) console.error(error);
+      commentsDiv.innerHTML = '';
+      comments.forEach((comment) => {
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.textContent = `${comment.content} (${comment.created_at})`;
+        commentsDiv.appendChild(div);
+      });
+    }
+
+    loadComments(); // 페이지 로드 시 댓글 불러오기
+  </script>
 </body>
 </html>
