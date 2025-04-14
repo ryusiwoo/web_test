@@ -1,90 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>좋아요 카운트 구현</title>
-
-    <!-- Firebase SDK 로드 (CDN 방식) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            background-color: #f9f9f9;
-            padding: 20px;
-        }
-
-        .like-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin-top: 50px;
-        }
-
-        .like-button {
-            font-size: 20px;
-            cursor: pointer;
-            padding: 10px 20px;
-            background-color: #ffeb3b;
-            border-radius: 5px;
-            border: none;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .like-count {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase 댓글 작성</title>
+  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database.js"></script>
 </head>
 <body>
-    <h1>좋아요 카운트 시스템</h1>
+  <h1>댓글 작성 연습</h1>
+  <form id="commentForm">
+    <textarea id="commentInput" placeholder="댓글을 작성하세요"></textarea><br>
+    <button type="submit">댓글 작성</button>
+  </form>
+  <ul id="commentList"></ul>
 
-    <div class="like-container">
-        <button id="likeButton" class="like-button">👍 좋아요</button>
-        <span id="likeCount" class="like-count">0</span>
-    </div>
-
-    <script>
-        // Firebase 설정 정보
-        const firebaseConfig = {
-            apiKey: "AIzaSyAejvBpHRHrOoLUbCaSHWl3_GvXQ1k10kQ",
-            authDomain: "jirisan-8a0a9.firebaseapp.com",
-            databaseURL: "https://jirisan-8a0a9-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "jirisan-8a0a9",
-            storageBucket: "jirisan-8a0a9.firebasestorage.app",
-            messagingSenderId: "623824081076",
-            appId: "1:623824081076:web:52c5e5638c17736aaa87e1",
-            measurementId: "G-Z4NCE0XM9C"
-        };
-
-        // Firebase 초기화
-        firebase.initializeApp(firebaseConfig);
-
-        // Database 참조
-        const database = firebase.database();
-
-        // 초기 좋아요 값 불러오기
-        database.ref("likes").on("value", function(snapshot) {
-            let count = snapshot.val() || 0;
-            document.getElementById("likeCount").textContent = count;
-        });
-
-        // 좋아요 버튼 클릭 이벤트
-        document.getElementById("likeButton").addEventListener("click", function() {
-            database.ref("likes").once("value").then(function(snapshot) {
-                let count = snapshot.val() || 0;
-                count++; // 좋아요 증가
-                database.ref("likes").set(count); // Firebase에 저장
-                document.getElementById("likeCount").textContent = count; // 화면 업데이트
-            });
-        });
-    </script>
+  <script src="script.js"></script>
 </body>
 </html>
