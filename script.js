@@ -10,13 +10,19 @@ const firebaseConfig = {
   measurementId: "G-7MHTPJZ8H5"
 };
 
+// Firebase 앱 초기화
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+console.log("Firebase 초기화 완료:", app);
 
 // 댓글 추가 함수
 const addComment = (text) => {
   const commentRef = db.ref('comments/');
-  commentRef.push({ text });
+  commentRef.push({ text }).then(() => {
+    console.log("댓글 작성 완료:", text);
+  }).catch((error) => {
+    console.error("댓글 작성 중 오류 발생:", error);
+  });
 };
 
 // 댓글 가져오기 함수
@@ -24,6 +30,8 @@ const fetchComments = () => {
   const commentRef = db.ref('comments/');
   commentRef.on('value', (snapshot) => {
     const comments = snapshot.val();
+    console.log("실시간 댓글 데이터:", comments);
+
     const commentList = document.getElementById('commentList');
     commentList.innerHTML = ''; // 기존 댓글 초기화
 
@@ -32,6 +40,8 @@ const fetchComments = () => {
       li.textContent = comments[id].text;
       commentList.appendChild(li);
     }
+  }, (error) => {
+    console.error("댓글 가져오는 중 오류 발생:", error);
   });
 };
 
@@ -43,8 +53,11 @@ commentForm.addEventListener('submit', (e) => {
   const comment = commentInput.value;
 
   if (comment) {
+    console.log("댓글 입력 값:", comment);
     addComment(comment); // 댓글 추가
     commentInput.value = ''; // 입력 필드 초기화
+  } else {
+    console.warn("댓글 입력 필드가 비어 있습니다.");
   }
 });
 
