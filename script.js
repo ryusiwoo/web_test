@@ -9,23 +9,27 @@ const commentList = document.getElementById('comment-list');
 
 // 댓글 불러오기
 async function loadComments() {
-    const { data, error } = await supabase
-        .from('comments')
-        .select('*')
-        .order('created_at', { ascending: false });
+    try {
+        const { data, error } = await supabase
+            .from('comments')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error('댓글 불러오기 오류:', error);
-        return;
+        if (error) {
+            console.error('댓글 불러오기 오류:', error);
+            return;
+        }
+
+        commentList.innerHTML = ''; // 댓글 목록 초기화
+        data.forEach((comment) => {
+            const newComment = document.createElement('li');
+            const commentDate = new Date(comment.created_at).toLocaleString();
+            newComment.textContent = `${comment.text} (${commentDate})`;
+            commentList.appendChild(newComment);
+        });
+    } catch (error) {
+        console.error('댓글 불러오기 중 오류 발생:', error);
     }
-
-    commentList.innerHTML = ''; // 댓글 목록 초기화
-    data.forEach((comment) => {
-        const newComment = document.createElement('li');
-        const commentDate = new Date(comment.created_at).toLocaleString();
-        newComment.textContent = `${comment.text} (${commentDate})`;
-        commentList.appendChild(newComment);
-    });
 }
 
 loadComments(); // 페이지 로드 시 댓글 불러오기
@@ -34,14 +38,18 @@ loadComments(); // 페이지 로드 시 댓글 불러오기
 submitButton.addEventListener('click', async () => {
     const commentText = commentInput.value.trim();
     if (commentText) {
-        const { error } = await supabase.from('comments').insert([{ text: commentText }]);
+        try {
+            const { error } = await supabase.from('comments').insert([{ text: commentText }]);
 
-        if (error) {
-            console.error('댓글 등록 오류:', error);
-            return;
+            if (error) {
+                console.error('댓글 등록 오류:', error);
+                return;
+            }
+
+            commentInput.value = ''; // 입력창 초기화
+            loadComments(); // 댓글 목록 갱신
+        } catch (error) {
+            console.error('댓글 등록 중 오류 발생:', error);
         }
-
-        commentInput.value = ''; // 입력창 초기화
-        loadComments(); // 댓글 목록 갱신
     }
 });
