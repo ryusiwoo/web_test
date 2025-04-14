@@ -1,12 +1,13 @@
 // Firebase 초기화
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAejvBpHRHrOoLUbCaSHWl3_GvXQ1k10kQ",
+  authDomain: "jirisan-8a0a9.firebaseapp.com",
+  databaseURL: "https://jirisan-8a0a9-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "jirisan-8a0a9",
+  storageBucket: "jirisan-8a0a9.firebasestorage.app",
+  messagingSenderId: "623824081076",
+  appId: "1:623824081076:web:68a519252583e490aa87e1",
+  measurementId: "G-7MHTPJZ8H5"
 };
 
 const app = firebase.initializeApp(firebaseConfig);
