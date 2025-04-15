@@ -15,21 +15,19 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 function submitComment() {
-//  const name = document.getElementById('name').value;
-  const message = document.getElementById('message').value;
-  if (!name || !message) {
+  const message = document.getElementById('message').value.trim();  // ← .trim() 추가
+  if (!message) {
     alert("댓글을 입력해주세요.");
     return;
   }
   const newCommentRef = db.ref('comments').push();
   newCommentRef.set({
-//    name: name,
     message: message,
     timestamp: Date.now()
   });
-//  document.getElementById('name').value = '';
   document.getElementById('message').value = '';
 }
+
 
 db.ref('comments').on('value', snapshot => {
   const commentsDiv = document.getElementById('comments');
