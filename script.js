@@ -15,19 +15,19 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 function submitComment() {
-  const name = document.getElementById('name').value;
+//  const name = document.getElementById('name').value;
   const message = document.getElementById('message').value;
   if (!name || !message) {
-    alert("이름과 댓글을 모두 입력해주세요.");
+    alert("댓글을 입력해주세요.");
     return;
   }
   const newCommentRef = db.ref('comments').push();
   newCommentRef.set({
-    name: name,
+//    name: name,
     message: message,
     timestamp: Date.now()
   });
-  document.getElementById('name').value = '';
+//  document.getElementById('name').value = '';
   document.getElementById('message').value = '';
 }
 
@@ -51,7 +51,7 @@ db.ref('comments').on('value', snapshot => {
         const div = document.createElement('div');
         div.className = 'comment';
         div.innerHTML = `
-          <strong>${comment.name}</strong><br>
+  //        <strong>${comment.name}</strong><br>
           ${comment.message}<br>
           <small style="color:gray;">${timeString}</small>
         `;
