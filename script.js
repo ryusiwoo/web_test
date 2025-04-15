@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Supabase 클라이언트 설정 (본인의 Supabase 프로젝트 설정으로 변경)
+    
     const SUPABASE_URL = 'https://ivqpiiaznzuxgrutukrk.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cXBpaWF6bnp1eGdydXR1a3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzMwODQsImV4cCI6MjA2MDIwOTA4NH0.gdfTjIRsB8t-vb_JFPFhQo8sqmFoObfKq1iYLGohiOI';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
