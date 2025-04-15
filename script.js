@@ -36,11 +36,26 @@ db.ref('comments').on('value', snapshot => {
   commentsDiv.innerHTML = '';
   const comments = snapshot.val();
   if (comments) {
-    Object.values(comments).sort((a, b) => b.timestamp - a.timestamp).forEach(comment => {
-      const div = document.createElement('div');
-      div.className = 'comment';
-      div.innerHTML = `<strong>${comment.name}</strong><br>${comment.message}`;
-      commentsDiv.appendChild(div);
-    });
+    Object.values(comments)
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .forEach(comment => {
+        const date = new Date(comment.timestamp);
+        const timeString = date.toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        const div = document.createElement('div');
+        div.className = 'comment';
+        div.innerHTML = `
+          <strong>${comment.name}</strong><br>
+          ${comment.message}<br>
+          <small style="color:gray;">${timeString}</small>
+        `;
+        commentsDiv.appendChild(div);
+      });
   }
 });
