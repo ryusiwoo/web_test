@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>산악회 사진첩</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script> </head>
+  <meta charset="UTF-8">
+  <title>댓글 게시판</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; }
+    input, textarea, button { display: block; width: 100%; margin-top: 10px; }
+    .comment { border-bottom: 1px solid #ccc; padding: 10px 0; }
+  </style>
+</head>
 <body>
-    <h1>산악회 사진첩</h1>
+  <h2>댓글 남기기</h2>
+  <input type="text" id="name" placeholder="이름">
+  <textarea id="message" placeholder="댓글을 입력하세요"></textarea>
+  <button onclick="submitComment()">등록</button>
 
-    <div id="photo-gallery">
-        <img src="mountain1.jpg" alt="산 사진 1">
-        <img src="mountain2.jpg" alt="산 사진 2">
-    </div>
+  <h3>댓글 목록</h3>
+  <div id="comments"></div>
 
-    <div id="comment-section">
-        <h2>댓글</h2>
-        <ul id="comment-list">
-        </ul>
-        <textarea id="comment-input" placeholder="댓글을 입력하세요."></textarea>
-        <button id="submit-button">등록</button>
-    </div>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
-    <script src="script.js"></script>
+  <!-- 내 JS 파일 -->
+  <script src="app.js"></script>
 </body>
 </html>
