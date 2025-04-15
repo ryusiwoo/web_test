@@ -74,18 +74,30 @@ document.getElementById('message').addEventListener('keydown', function(event) {
   }
 });
 
+// Firebase 인증 초기화
+firebase.auth().signInAnonymously()
+  .then(() => {
+    console.log("익명 사용자로 로그인 완료");
+  })
+  .catch((error) => {
+    console.error("익명 인증 실패: ", error);
+  });
 
-// 댓글 등록 처리 (이 부분은 기존 코드와 동일)
+// 댓글 등록 처리
 function submitComment() {
   const message = document.getElementById('message').value.trim();
   if (!message) {
     alert("댓글을 입력해주세요.");
     return;
   }
+
+  // 익명 사용자 인증 후 댓글 작성
   const newCommentRef = db.ref('comments').push();
   newCommentRef.set({
     message: message,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    userId: firebase.auth().currentUser.uid // 익명 사용자 ID 추가
   });
-  document.getElementById('message').value = '';
+
+  document.getElementById('message').value = ''; // 댓글 입력란 초기화
 }
