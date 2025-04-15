@@ -49,7 +49,6 @@ db.ref('comments').on('value', snapshot => {
         const div = document.createElement('div');
         div.className = 'comment';
         div.innerHTML = `
-  //        <strong>${comment.name}</strong><br>
           ${comment.message}<br>
           <small style="color:gray;">${timeString}</small>
         `;
