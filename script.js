@@ -66,6 +66,15 @@ function toggleComments() {
   renderComments();
 }
 
+// 댓글 입력창에 엔터 키 이벤트 추가
+document.getElementById('message').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // 엔터 키 눌렀을 때 기본 동작(줄바꿈)을 막음
+    submitComment(); // 댓글 등록 함수 호출
+  }
+});
+
+
 // 댓글 등록 처리 (이 부분은 기존 코드와 동일)
 function submitComment() {
   const message = document.getElementById('message').value.trim();
