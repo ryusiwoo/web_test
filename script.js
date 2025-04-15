@@ -14,36 +14,25 @@
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-function submitComment() {
-  const message = document.getElementById('message').value.trim();  // ← .trim() 추가
-  if (!message) {
-    alert("댓글을 입력해주세요.");
-    return;
-  }
-  const newCommentRef = db.ref('comments').push();
-  newCommentRef.set({
-    message: message,
-    timestamp: Date.now()
-  });
-  document.getElementById('message').value = '';
-}
-
 let allComments = [];     // 전체 댓글 저장용
 let expanded = false;     // 확장 여부
 
+// Firebase에서 댓글을 가져오는 부분
 db.ref('comments').on('value', snapshot => {
   const comments = snapshot.val();
   if (comments) {
     allComments = Object.values(comments)
-      .sort((a, b) => b.timestamp - a.timestamp);
-    renderComments(); // 처음 5개만 렌더링
+      .sort((a, b) => b.timestamp - a.timestamp); // 최신 댓글부터 정렬
+    renderComments(); // 5개 댓글만 먼저 렌더링
   }
 });
 
+// 댓글을 렌더링하는 함수
 function renderComments() {
   const commentsDiv = document.getElementById('comments');
   commentsDiv.innerHTML = '';
 
+  // 'expanded' 값에 따라 보여줄 댓글을 선택
   const commentsToShow = expanded ? allComments : allComments.slice(0, 5);
 
   commentsToShow.forEach(comment => {
@@ -65,19 +54,32 @@ function renderComments() {
     commentsDiv.appendChild(div);
   });
 
+  // "더 보기" 버튼 처리
   const toggleButton = document.getElementById('toggleButton');
-  toggleButton.style.display = allComments.length > 5 ? 'block' : 'none';
+  toggleButton.style.display = allComments.length > 5 ? 'block' : 'none';  // 5개 이상일 때만 버튼 보이기
   toggleButton.innerText = expanded ? '간단히 보기' : '더 보기';
 }
 
+// "더 보기" 또는 "간단히 보기" 버튼 클릭 시 댓글 확장/축소
 function toggleComments() {
   expanded = !expanded;
   renderComments();
 }
 
-
-
-
+// 댓글 등록 처리 (이 부분은 기존 코드와 동일)
+function submitComment() {
+  const message = document.getElementById('message').value.trim();
+  if (!message) {
+    alert("댓글을 입력해주세요.");
+    return;
+  }
+  const newCommentRef = db.ref('comments').push();
+  newCommentRef.set({
+    message: message,
+    timestamp: Date.now()
+  });
+  document.getElementById('message').value = '';
+}
 
 db.ref('comments').on('value', snapshot => {
   const commentsDiv = document.getElementById('comments');
