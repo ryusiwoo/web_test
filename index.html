@@ -8,11 +8,21 @@
 <body>
   <h2>댓글 남기기</h2>
 
+  <!-- 댓글 입력창 -->
   <textarea id="message" placeholder="댓글을 입력하세요"></textarea>
 
+  <!-- 댓글 목록 -->
   <h3>댓글 목록</h3>
   <div id="comments"></div>
+  
+  <!-- 댓글 더 보기 버튼 -->
   <button id="toggleButton" onclick="toggleComments()">더 보기</button>
+
+  <!-- 좋아요 버튼 -->
+  <div>
+    <button id="likeButton" onclick="likePage()">👍 좋아요</button>
+    <span id="likeCount">0</span> <span>명</span>
+  </div>
 
   <!-- 관리자 로그인 링크 -->
   <a href="#" id="adminLogin" class="adminLoginLink">관리자 로그인</a>
