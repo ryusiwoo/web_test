@@ -17,6 +17,7 @@ const db = firebase.database();
 const host = window.location.hostname;
 const photoId = host.split('.')[0];  // 예: 'brilliant-stardust-0ecc28'
 const commentsRef = db.ref('comments/' + photoId);
+const likesRef = db.ref('likes/' + photoId);
 
 // ✅ 익명 로그인
 firebase.auth().signInAnonymously()
@@ -97,6 +98,19 @@ function submitComment() {
   });
 
   document.getElementById('message').value = '';
+}
+
+// 🔄 좋아요 수 실시간 반영
+likesRef.on('value', snapshot => {
+  const count = snapshot.val() || 0;
+  document.getElementById('likeCount').innerText = count;
+});
+
+// ⬆️ 좋아요 증가 함수
+function incrementLike() {
+  likesRef.transaction(current => {
+    return (current || 0) + 1;
+  });
 }
 
 // ⌨️ Enter 키로 댓글 등록
