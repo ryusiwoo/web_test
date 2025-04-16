@@ -1,4 +1,4 @@
-// Firebase 설정
+// Firebase 설정 (1 ~ 11번째 줄)
 const firebaseConfig = {
   apiKey: "AIzaSyBPHER9uMFWodYGEVsdj2KGY_m8HEOCUAQ",
   authDomain: "comments-24767.firebaseapp.com",
@@ -14,17 +14,17 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
-// 댓글 데이터베이스 참조
+// 댓글 데이터베이스 참조 (14번째 줄)
 const commentsRef = db.ref('comments');
 const likeRef = db.ref('likeCount');
 
-// 좋아요 카운트 불러오기
+// 좋아요 카운트 불러오기 (17 ~ 21번째 줄)
 likeRef.on('value', (snapshot) => {
   const likeCount = snapshot.val() || 0;
   document.getElementById('likeCount').textContent = likeCount;
 });
 
-// 댓글 등록 함수
+// 댓글 등록 함수 (24 ~ 34번째 줄)
 document.getElementById('message').addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
@@ -36,7 +36,7 @@ document.getElementById('message').addEventListener('keydown', function (e) {
   }
 });
 
-// 댓글 삭제 이벤트 감지
+// 댓글 삭제 이벤트 감지 (37 ~ 44번째 줄 - 그대로 유지)
 commentsRef.on('child_removed', (snapshot) => {
   const commentId = snapshot.key;
   const commentElement = document.getElementById(commentId); // 해당 ID를 가진 댓글 요소를 찾음
@@ -45,11 +45,12 @@ commentsRef.on('child_removed', (snapshot) => {
   }
 });
 
+// "더 보기" 기능 관련 변수 (47 ~ 49번째 줄 - 새로 추가)
 let displayedCommentsCount = 5; // 처음 보여줄 댓글 개수
 let allComments = []; // 모든 댓글 데이터를 저장할 배열
 let lastVisibleComment = null; // 마지막으로 보여진 댓글 스냅샷
 
-// 댓글 출력 함수 (초기 로딩 및 더 보기)
+// 댓글 출력 함수 (초기 로딩 및 더 보기) (52 ~ 90번째 줄 - 새로 추가 및 수정)
 function loadComments(initialLoad = true) {
   let query = commentsRef.orderBy('timestamp', 'desc').limitToLast(displayedCommentsCount);
 
@@ -84,7 +85,7 @@ function loadComments(initialLoad = true) {
   });
 }
 
-// 댓글 화면에 렌더링
+// 댓글 화면에 렌더링 (93 ~ 113번째 줄 - 새로 추가 및 수정)
 function renderComments() {
   const commentsContainer = document.getElementById('comments');
   commentsContainer.innerHTML = ''; // 기존 댓글 비우기
@@ -104,7 +105,7 @@ function renderComments() {
   });
 }
 
-// "더 보기" 버튼 표시 여부 업데이트
+// "더 보기" 버튼 표시 여부 업데이트 (116 ~ 135번째 줄 - 새로 추가 및 수정)
 function updateToggleButtonVisibility() {
   const toggleButton = document.getElementById('toggleButton');
   if (allComments.length < displayedCommentsCount || allComments.length === 0) {
@@ -121,16 +122,16 @@ function updateToggleButtonVisibility() {
   }
 }
 
-// "더 보기" 버튼 클릭 이벤트 핸들러
+// "더 보기" 버튼 클릭 이벤트 핸들러 (138 ~ 141번째 줄 - 새로 추가)
 function toggleComments() {
   displayedCommentsCount += 5; // 다음에 불러올 댓글 수 증가
   loadComments(false); // 추가 댓글 로드
 }
 
-// 초기 댓글 로드
+// 초기 댓글 로드 (144번째 줄 - 새로 추가)
 loadComments(true);
 
-// 새로운 댓글 추가 시 (기존 child_added 리스너 수정)
+// 새로운 댓글 추가 시 (147 ~ 157번째 줄 - 기존 child_added 리스너 내용으로 대체)
 commentsRef.orderBy('timestamp', 'desc').limitToLast(1).on('child_added', (snapshot) => {
   const newComment = { id: snapshot.key, data: snapshot.val() };
   allComments.unshift(newComment); // 배열 맨 앞에 추가
@@ -140,21 +141,20 @@ commentsRef.orderBy('timestamp', 'desc').limitToLast(1).on('child_added', (snaps
   renderComments();
   updateToggleButtonVisibility();
 });
-});
 
-// 댓글 삭제 함수 (관리자만)
+// 댓글 삭제 함수 (160 ~ 163번째 줄 - 그대로 유지)
 function deleteComment(commentId) {
   commentsRef.child(commentId).remove();
 }
 
-// 좋아요 버튼 클릭시 카운트 증가
+// 좋아요 버튼 클릭시 카운트 증가 (166 ~ 169번째 줄 - 그대로 유지)
 function likePage() {
   likeRef.transaction(currentLikeCount => {
     return (currentLikeCount || 0) + 1;
   });
 }
 
-// 관리자 로그인 팝업 열기
+// 관리자 로그인 팝업 열기 (172 ~ 176번째 줄 - 그대로 유지)
 document.getElementById('adminLogin').addEventListener('click', function (e) {
   e.preventDefault();
   window.open('admin-login.html', 'Admin Login', 'width=400,height=500');
