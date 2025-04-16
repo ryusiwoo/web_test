@@ -15,6 +15,10 @@
   <textarea id="message" placeholder="댓글을 입력하세요"></textarea>
   <button onclick="submitComment()">등록</button>
 
+  <!-- 좋아요 버튼 추가 -->
+  <button id="likeButton" onclick="incrementLike()">👍 좋아요 <span id="likeCount">0</span></button>
+
+  
   <h3>댓글 목록</h3>
   <div id="comments"></div>
   <button id="toggleButton" onclick="toggleComments()">더 보기</button>
