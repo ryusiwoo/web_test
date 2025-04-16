@@ -1,3 +1,4 @@
+// Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyBPHER9uMFWodYGEVsdj2KGY_m8HEOCUAQ",
   authDomain: "comments-24767.firebaseapp.com",
@@ -13,94 +14,71 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const auth = firebase.auth();
 
+// 댓글 데이터베이스 참조
 const commentsRef = db.ref('comments');
+const likeRef = db.ref('likeCount');
 
-// 댓글 목록 렌더링
-let allComments = [];
-let expanded = false;
+// 좋아요 카운트 불러오기
+likeRef.on('value', (snapshot) => {
+  const likeCount = snapshot.val() || 0;
+  document.getElementById('likeCount').textContent = likeCount;
+});
 
-commentsRef.on('value', snapshot => {
-  const comments = snapshot.val();
-  if (comments) {
-    allComments = Object.values(comments).sort((a, b) => b.timestamp - a.timestamp);
-    renderComments();
-  } else {
-    allComments = [];
-    renderComments();
+// 댓글 등록 함수
+document.getElementById('message').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const message = document.getElementById('message').value.trim();
+    if (message) {
+      commentsRef.push({ message, timestamp: Date.now() });
+      document.getElementById('message').value = ''; // 댓글 입력창 비우기
+    }
   }
 });
 
-function renderComments() {
-  const commentsDiv = document.getElementById('comments');
-  commentsDiv.innerHTML = '';
-  const commentsToShow = expanded ? allComments : allComments.slice(0, 5);
-  commentsToShow.forEach(comment => {
-    const date = new Date(comment.timestamp);
-    const timeString = date.toLocaleString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-    const div = document.createElement('div');
-    div.className = 'comment';
-    div.innerHTML = `
-      ${comment.message}<br>
-      <small style="color:gray;">${timeString}</small>
-      ${comment.userId === firebase.auth().currentUser?.uid ? `<button onclick="deleteComment('${comment.id}')">삭제</button>` : ''}
-    `;
-    commentsDiv.appendChild(div);
-  });
+// 댓글 출력 함수
+commentsRef.on('child_added', (snapshot) => {
+  const commentData = snapshot.val();
+  const commentId = snapshot.key;
+  const commentElement = document.createElement('div');
+  commentElement.textContent = commentData.message;
 
-  const toggleButton = document.getElementById('toggleButton');
-  toggleButton.style.display = allComments.length > 5 ? 'block' : 'none';
-  toggleButton.innerText = expanded ? '간단히 보기' : '더 보기';
-}
-
-function toggleComments() {
-  expanded = !expanded;
-  renderComments();
-}
-
-// 댓글 등록
-document.getElementById('message').addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    submitComment();
+// 관리자 로그인 팝업에서 메시지를 받아 처리
+window.addEventListener('message', function (e) {
+  if (e.data === 'adminLoggedIn') {
+    // 관리자가 로그인되었을 때 처리
+    alert('관리자 로그인 완료');
+    // 이후 필요한 처리를 추가 (예: 댓글 삭제 버튼 활성화)
   }
 });
 
-function submitComment() {
-  const message = document.getElementById('message').value.trim();
-  if (!message) {
-    alert("댓글을 입력해주세요.");
-    return;
+
+  
+  // 관리자일 경우 삭제 버튼 추가
+  if (auth.currentUser && auth.currentUser.uid === '관리자 UID') {
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '삭제';
+    deleteButton.onclick = () => deleteComment(commentId);
+    commentElement.appendChild(deleteButton);
   }
-  const newCommentRef = commentsRef.push();
-  newCommentRef.set({
-    message: message,
-    timestamp: Date.now(),
-    userId: firebase.auth().currentUser.uid,
-  });
 
-  document.getElementById('message').value = '';
-}
+  document.getElementById('comments').appendChild(commentElement);
+});
 
-// 댓글 삭제 (관리자)
+// 댓글 삭제 함수 (관리자만)
 function deleteComment(commentId) {
-  if (confirm("정말 삭제하시겠습니까?")) {
-    commentsRef.child(commentId).remove();
-  }
+  commentsRef.child(commentId).remove();
 }
 
-// 관리자 로그인 링크
-document.getElementById('adminLogin').addEventListener('click', function(e) {
+// 좋아요 버튼 클릭시 카운트 증가
+function likePage() {
+  likeRef.transaction(currentLikeCount => {
+    return (currentLikeCount || 0) + 1;
+  });
+}
+
+// 관리자 로그인 팝업 열기
+document.getElementById('adminLogin').addEventListener('click', function (e) {
   e.preventDefault();
   window.open('admin-login.html', 'Admin Login', 'width=400,height=500');
-});
-
-// 익명 로그인
-firebase.auth().signInAnonymously().catch((error) => {
-  console.error("익명 로그인 실패: ", error);
 });
