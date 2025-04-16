@@ -19,14 +19,20 @@ const photoId = host.split('.')[0];  // 예: 'brilliant-stardust-0ecc28'
 const commentsRef = db.ref('comments/' + photoId);
 const likesRef = db.ref('likes/' + photoId);
 
-// ✅ 익명 로그인
-firebase.auth().signInAnonymously()
-  .then(() => {
-    console.log("익명 로그인 완료");
-  })
-  .catch((error) => {
-    console.error("익명 로그인 실패: ", error);
-  });
+// 익명 로그인은 로그인된 사용자가 없을 때만 수행
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    firebase.auth().signInAnonymously()
+      .then(() => {
+        console.log("익명 로그인 완료");
+      })
+      .catch((error) => {
+        console.error("익명 로그인 실패: ", error);
+      });
+  } else {
+    console.log("이미 로그인된 사용자:", user.uid);
+  }
+});
 
 // 📝 댓글 목록 관련 변수
 let allComments = [];
@@ -144,3 +150,18 @@ likesRef.on('value', snapshot => {
 likeButton.addEventListener('click', () => {
   likesRef.transaction(current => (current || 0) + 1);
 });
+
+function adminLogin() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(result => {
+      const user = result.user;
+      alert(`${user.email} 계정으로 로그인되었습니다.`);
+      // 필요 시 관리자 UID 콘솔에 출력
+      console.log("로그인된 UID:", user.uid);
+    })
+    .catch(error => {
+      console.error("관리자 로그인 실패:", error);
+    });
+}
+
