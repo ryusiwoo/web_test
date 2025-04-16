@@ -2,39 +2,38 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>댓글 게시판</title>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 1em; }
-    input, textarea, button { display: block; width: 100%; margin-top: 10px; }
-    .comment { border-bottom: 1px solid #ccc; padding: 10px 0; }
-  </style>
+  <title>산행 앨범 댓글</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>댓글 남기기</h2>
-
-  <textarea id="message" placeholder="댓글을 입력하고 엔터키누르세요"></textarea>
-  <button onclick="submitComment()">등록</button>
-
-  <!-- 좋아요 버튼 추가 -->
-  <button id="likeButton" onclick="incrementLike()">👍 <span id="likeCount">0</span></button>
-
-  
-  <h3>댓글 목록</h3>
-  <div id="comments"></div>
-  <button id="toggleButton" onclick="toggleComments()">더 보기</button>
 
   <!-- 관리자 로그인 버튼 -->
-<div style="position: fixed; top: 10px; right: 10px;">
-  <a href="#" onclick="adminLogin()" style="text-decoration:none; color:gray; font-size:0.9em;">관리자 로그인</a>
-</div>
+  <div id="adminLogin">
+    <a href="#" onclick="adminLogin()">관리자 로그인</a>
+  </div>
 
+  <!-- 댓글 입력창 -->
+  <h2>댓글</h2>
+  <textarea id="message" placeholder="댓글을 입력하세요" rows="3" cols="50"></textarea><br>
+  <button onclick="submitComment()">등록</button>
 
-  <!-- 🔽 Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script> <!-- ✅ 인증 SDK 추가 -->
+  <!-- 좋아요 버튼 -->
+  <div style="margin-top: 20px;">
+    <button id="likeButton">👍 좋아요 <span id="likeCount">0</span></button>
+  </div>
 
-  <!-- 🔽 내 JS 파일 -->
+  <!-- 댓글 목록 -->
+  <div id="comments" style="margin-top: 20px;"></div>
+
+  <!-- 더보기 버튼 -->
+  <button id="toggleButton" onclick="toggleComments()" style="display:none;">더 보기</button>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+  <!-- 사용자 스크립트 -->
   <script src="script.js"></script>
 </body>
 </html>
