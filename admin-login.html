@@ -3,24 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <title>관리자 로그인</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      width: 300px;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
+
   <h2>관리자 로그인</h2>
 
-  <form id="adminLoginForm">
-    <label for="email">이메일</label>
-    <input type="email" id="email" required>
-
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" required>
-
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="아이디" required />
+    <input type="password" id="password" placeholder="비밀번호" required />
     <button type="submit">로그인</button>
   </form>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBPHER9uMFWodYGEVsdj2KGY_m8HEOCUAQ",
+      authDomain: "comments-24767.firebaseapp.com",
+      databaseURL: "https://comments-24767-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "comments-24767",
+      storageBucket: "comments-24767.appspot.com",
+      messagingSenderId: "559876960346",
+      appId: "1:559876960346:web:faf067629f4c00497de863",
+      measurementId: "G-T2DTS2SY4D"
+    };
 
-  <script src="admin-script.js"></script>
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // 간단한 아이디와 비밀번호로 관리자 로그인 구현 (여기서는 고정된 값으로 예시)
+      if (username === 'admin' && password === 'password123') {
+        alert('로그인 성공');
+        // 로그인 후 admin 기능 활성화
+        window.opener.postMessage('adminLoggedIn', '*');
+        window.close();
+      } else {
+        alert('아이디나 비밀번호가 잘못되었습니다.');
+      }
+    });
+  </script>
+
 </body>
 </html>
