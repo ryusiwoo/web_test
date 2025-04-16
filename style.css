@@ -1,13 +1,78 @@
-#adminLogin {
-  position: fixed;
-  top: 10px;
-  right: 20px;
-  font-size: 14px;
-  color: gray;
+/* 기본 레이아웃 */
+body {
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: auto;
+  padding: 1em;
+  background-color: #fdfdfd;
+}
+
+/* 입력 요소들 */
+input, textarea, button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 1em;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+/* 댓글 박스 */
+.comment {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+/* 더 보기 버튼 */
+#toggleButton {
+  margin-top: 10px;
+  background-color: #eee;
+  border: none;
+  padding: 8px;
   cursor: pointer;
-  z-index: 1000;
+}
+
+/* 좋아요 버튼 */
+#likeButton {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  cursor: pointer;
+  font-size: 1.1em;
+  border: none;
+  background: none;
+}
+
+#likeButton img {
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+}
+
+/* 관리자 로그인 링크 */
+#adminLoginBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 0.9em;
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
   text-decoration: underline;
 }
-#adminLogin:hover {
-  color: black;
+
+#adminLoginBtn:hover {
+  color: #333;
+}
+
+/* 댓글 삭제 버튼 (관리자만 보임) */
+.delete-button {
+  margin-top: 5px;
+  font-size: 0.8em;
+  color: red;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
 }
