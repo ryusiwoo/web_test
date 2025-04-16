@@ -1,0 +1,13 @@
+#adminLogin {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  font-size: 14px;
+  color: gray;
+  cursor: pointer;
+  z-index: 1000;
+  text-decoration: underline;
+}
+#adminLogin:hover {
+  color: black;
+}
