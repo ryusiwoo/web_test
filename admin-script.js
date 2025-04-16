@@ -1,30 +1,17 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyBPHER9uMFWodYGEVsdj2KGY_m8HEOCUAQ",
-  authDomain: "comments-24767.firebaseapp.com",
-  databaseURL: "https://comments-24767-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "comments-24767",
-  storageBucket: "comments-24767.appspot.com",
-  messagingSenderId: "559876960346",
-  appId: "1:559876960346:web:faf067629f4c00497de863",
-  measurementId: "G-T2DTS2SY4D"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  auth.signInWithEmailAndPassword(email, password)
-    .then(userCredential => {
-      alert("로그인 성공");
-      window.opener.location.reload(); // 댓글 페이지 새로 고침
-      window.close(); // 팝업 닫기
-    })
-    .catch(error => {
-      alert("로그인 실패: " + error.message);
-    });
+// 관리자 로그인 메시지 처리
+window.addEventListener('message', function (e) {
+  if (e.data === 'adminLoggedIn') {
+    // 관리자가 로그인되었을 때 처리
+    alert('관리자 로그인 완료');
+    // 이후 필요한 처리를 추가 (예: 댓글 삭제 버튼 활성화 등)
+    enableDeleteButtons();  // 예시로 삭제 버튼을 활성화하는 함수 호출
+  }
 });
+
+function enableDeleteButtons() {
+  // 예시: 댓글 삭제 버튼을 활성화하는 코드
+  const deleteButtons = document.querySelectorAll('.delete-comment');
+  deleteButtons.forEach(button => {
+    button.style.display = 'inline-block';  // 버튼을 보이게 함
+  });
+}
