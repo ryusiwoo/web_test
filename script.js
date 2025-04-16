@@ -16,14 +16,12 @@ const db = firebase.database();
 // 🔑 현재 URL의 서브도메인을 photoId로 사용
 const host = window.location.hostname;
 const photoId = host.split('.')[0];  // 예: 'brilliant-stardust-0ecc28'
-const commentsRef = db.ref('comments/' + photoId);
-const likesRef = db.ref('likes/' + photoId);
 
-// 🔄 좋아요 수 실시간 반영
-likesRef.on('value', snapshot => {
-  const count = snapshot.val() || 0;
-  document.getElementById('likeCount').innerText = count;
-});
+// ✅ 댓글 데이터 참조
+const commentsRef = db.ref('comments/' + photoId);
+
+// ✅ 좋아요 데이터 참조
+const likesRef = db.ref('likes/' + photoId);
 
 // ✅ 익명 로그인
 firebase.auth().signInAnonymously()
@@ -38,7 +36,7 @@ firebase.auth().signInAnonymously()
 let allComments = [];
 let expanded = false;
 
-// 🔄 댓글 불러오기
+// 🔄 댓글 실시간 불러오기
 commentsRef.on('value', snapshot => {
   const comments = snapshot.val();
   if (comments) {
@@ -48,6 +46,15 @@ commentsRef.on('value', snapshot => {
   } else {
     allComments = [];
     renderComments();
+  }
+});
+
+// 🔄 좋아요 실시간 반영
+likesRef.on('value', snapshot => {
+  const count = snapshot.val() || 0;
+  const likeSpan = document.getElementById('likeCount');
+  if (likeSpan) {
+    likeSpan.innerText = count;
   }
 });
 
@@ -106,7 +113,7 @@ function submitComment() {
   document.getElementById('message').value = '';
 }
 
-// ⬆️ 좋아요 증가 함수
+// ⬆️ 좋아요 증가
 function incrementLike() {
   likesRef.transaction(current => {
     return (current || 0) + 1;
