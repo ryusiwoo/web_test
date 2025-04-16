@@ -7,10 +7,23 @@
 </head>
 <body>
 
+window.addEventListener('DOMContentLoaded', () => {
+  const adminLoginLink = document.getElementById('adminLogin');
+  if (adminLoginLink) {
+    adminLoginLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      window.open('admin-login.html', 'Admin Login', 'width=400,height=500');
+    });
+  }
+});
+
+  
   <!-- 관리자 로그인 버튼 -->
   <div id="adminLogin">
     <a href="#" onclick="adminLogin()">관리자 로그인</a>
   </div>
+
+  
 
   <!-- 댓글 입력창 -->
   <h2>댓글</h2>
