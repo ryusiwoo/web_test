@@ -51,15 +51,17 @@ input, textarea, button {
 
 /* 관리자 로그인 링크 */
 #adminLoginBtn {
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
+  background-color: transparent; /* 배경 투명 */
   font-size: 0.9em;
   background: none;
   border: none;
   color: #888;
   cursor: pointer;
   text-decoration: underline;
+  z-index: 1000;     /* 다른 요소 위에 표시되도록 */
 }
 
 #adminLoginBtn:hover {
