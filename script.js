@@ -13,29 +13,20 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ✅ 관리자 UID (나중에 확인 후 이 값으로 바꾸세요)
-const ADMIN_UID = "관리자_UID_여기에_입력";
-
-// ✅ 로그인 상태 저장용 전역 변수
-let currentUser = null;
-
 // 🔑 현재 URL의 서브도메인을 photoId로 사용
 const host = window.location.hostname;
-const photoId = host.split('.')[0];
+const photoId = host.split('.')[0];  // 예: 'brilliant-stardust-0ecc28'
 const commentsRef = db.ref('comments/' + photoId);
+const likesRef = db.ref('likes/' + photoId);
 
-// ✅ 자동 익명 로그인 시도
-firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    currentUser = user;
-    console.log("로그인됨. UID:", user.uid);
-  } else {
-    // 익명 로그인
-    firebase.auth().signInAnonymously()
-      .then(() => console.log("익명 로그인 완료"))
-      .catch(error => console.error("익명 로그인 실패:", error));
-  }
-});
+// ✅ 익명 로그인
+firebase.auth().signInAnonymously()
+  .then(() => {
+    console.log("익명 로그인 완료");
+  })
+  .catch((error) => {
+    console.error("익명 로그인 실패: ", error);
+  });
 
 // 📝 댓글 목록 관련 변수
 let allComments = [];
@@ -45,8 +36,7 @@ let expanded = false;
 commentsRef.on('value', snapshot => {
   const comments = snapshot.val();
   if (comments) {
-    allComments = Object.entries(comments)
-      .map(([id, data]) => ({ id, ...data }))
+    allComments = Object.values(comments)
       .sort((a, b) => b.timestamp - a.timestamp);
     renderComments();
   } else {
@@ -61,10 +51,10 @@ function renderComments() {
   commentsDiv.innerHTML = '';
 
   const commentsToShow = expanded ? allComments : allComments.slice(0, 5);
-  const currentUser = firebase.auth().currentUser;
-  const likesRef = db.ref('likes/' + photoId);
 
-  commentsToShow.forEach((comment, index) => {
+  const currentUser = firebase.auth().currentUser;
+
+  commentsToShow.forEach(comment => {
     const date = new Date(comment.timestamp);
     const timeString = date.toLocaleString('ko-KR', {
       year: 'numeric',
@@ -90,26 +80,6 @@ function renderComments() {
       div.appendChild(deleteBtn);
     }
 
-    // ✅ 좋아요 버튼
-    const likeBtn = document.createElement('button');
-    likeBtn.innerText = '❤️ 좋아요';
-    likeBtn.style.marginTop = '5px';
-    likeBtn.onclick = () => {
-      likesRef.transaction(current => (current || 0) + 1);
-    };
-
-    // ✅ 좋아요 카운트 표시
-    const likeCount = document.createElement('div');
-    likeCount.style.color = 'tomato';
-    likeCount.style.marginTop = '5px';
-
-    likesRef.on('value', snapshot => {
-      likeCount.innerText = `❤️ 좋아요: ${snapshot.val() || 0}`;
-    });
-
-    div.appendChild(likeBtn);
-    div.appendChild(likeCount);
-
     commentsDiv.appendChild(div);
   });
 
@@ -117,8 +87,6 @@ function renderComments() {
   toggleButton.style.display = allComments.length > 5 ? 'block' : 'none';
   toggleButton.innerText = expanded ? '간단히 보기' : '더 보기';
 }
-
-
 
 // 🔀 더 보기 / 간단히 보기
 function toggleComments() {
@@ -138,30 +106,11 @@ function submitComment() {
   newCommentRef.set({
     message: message,
     timestamp: Date.now(),
-    userId: currentUser ? currentUser.uid : null
+    userId: firebase.auth().currentUser.uid
   });
 
   document.getElementById('message').value = '';
 }
-
-// 🗑️ 댓글 삭제 (관리자만 가능)
-function deleteComment(message, timestamp) {
-  if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
-
-  commentsRef.once('value', snapshot => {
-    const comments = snapshot.val();
-    for (let key in comments) {
-      const comment = comments[key];
-      if (comment.message === message && comment.timestamp === timestamp) {
-        commentsRef.child(key).remove()
-          .then(() => console.log('댓글 삭제 완료'))
-          .catch(err => console.error('삭제 실패:', err));
-        break;
-      }
-    }
-  });
-}
-
 
 // ⌨️ Enter 키로 댓글 등록
 document.getElementById('message').addEventListener('keydown', function(event) {
@@ -171,34 +120,27 @@ document.getElementById('message').addEventListener('keydown', function(event) {
   }
 });
 
-// 🔐 관리자 로그인 (이메일/비밀번호)
-function signInWithEmailPassword() {
-  const email = prompt("관리자 이메일을 입력하세요");
-  const password = prompt("비밀번호를 입력하세요");
-
-  firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      currentUser = userCredential.user;
-      alert("관리자 로그인 성공");
-      renderComments(); // 삭제 버튼 갱신
-    })
-    .catch((error) => {
-      alert("로그인 실패: " + error.message);
+// ✅ 댓글 삭제 (관리자만)
+function deleteComment(message, timestamp) {
+  const commentRef = commentsRef.orderByChild('timestamp').equalTo(timestamp).limitToFirst(1);
+  commentRef.once('value', snapshot => {
+    snapshot.forEach(childSnapshot => {
+      childSnapshot.ref.remove();
     });
+  });
 }
 
+// 🔥 좋아요 버튼과 카운트 (웹페이지 전체)
+const likeButton = document.getElementById('likeButton');
+const likeCountDiv = document.getElementById('likeCount');
 
-// 좋아요 기능
-const likesRef = db.ref('likes/' + photoId);
-
-// 좋아요 수 실시간 반영
+// 실시간 좋아요 수 표시
 likesRef.on('value', snapshot => {
   const count = snapshot.val() || 0;
-  document.getElementById('likeCount').innerText = count;
+  likeCountDiv.innerText = `좋아요: ${count}`;
 });
 
-// 좋아요 누르기 (중복 방지 없이 단순 증가 방식)
-function like() {
+// 좋아요 버튼 클릭 시 카운트 증가
+likeButton.addEventListener('click', () => {
   likesRef.transaction(current => (current || 0) + 1);
-}
-
+});
