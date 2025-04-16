@@ -3,52 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <title>관리자 로그인</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    input {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
   <h2>관리자 로그인</h2>
-  
-  <form id="loginForm">
-    <input type="email" id="email" placeholder="이메일" required><br>
-    <input type="password" id="password" placeholder="비밀번호" required><br>
-    <button type="submit">로그인</button>
-  </form>
-  
+  <input type="email" id="email" placeholder="이메일">
+  <input type="password" id="password" placeholder="비밀번호">
+  <button onclick="login()">로그인</button>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
   <script>
-    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyBPHER9uMFWodYGEVsdj2KGY_m8HEOCUAQ",
       authDomain: "comments-24767.firebaseapp.com",
-      databaseURL: "https://comments-24767-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "comments-24767",
-      storageBucket: "comments-24767.appspot.com",
-      messagingSenderId: "559876960346",
-      appId: "1:559876960346:web:faf067629f4c00497de863",
-      measurementId: "G-T2DTS2SY4D"
     };
 
-    // Firebase 초기화
-    const app = firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // 로그인 폼 제출 이벤트
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-      e.preventDefault();
+    // 관리자 UID 리스트 (추후 DB에서 관리하도록 개선 가능)
+    const ADMIN_UIDS = [
+      'FCiHMPxEBAO7vvZv8SKWzgOxP9s1'  // 예시 UID: 실제 관리자 UID로 교체
+    ];
 
+    function login() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      // Firebase 인증
       auth.signInWithEmailAndPassword(email, password)
         .then(userCredential => {
           const user = userCredential.user;
-          
-          // 로그인 성공 시 관리자 확인 (예: 특정 UID나 이메일로 관리자 판별)
-          if (user.email === 'admin@example.com') {
-            // 관리자로 로그인된 경우
-            window.opener.postMessage('adminLoggedIn', '*');  // 부모 창에 관리자 로그인 메시지 전송
-            window.close();  // 팝업 창 닫기
+
+          // UID로 관리자 판별
+          if (ADMIN_UIDS.includes(user.uid)) {
+            window.opener.postMessage('adminLoggedIn', '*');
+            window.close();
           } else {
             alert('관리자 계정이 아닙니다.');
           }
@@ -56,7 +65,7 @@
         .catch(error => {
           alert('로그인 실패: ' + error.message);
         });
-    });
+    }
   </script>
 </body>
 </html>
