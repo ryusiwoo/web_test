@@ -2,39 +2,27 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>산행 앨범 댓글</title>
+  <title>댓글 게시판</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <h2>댓글 남기기</h2>
 
-  <!-- 관리자 로그인 버튼 -->
-  <div id="adminLogin">
-    <a href="#" onclick="adminLogin()">관리자 로그인</a>
-  </div>
+  <textarea id="message" placeholder="댓글을 입력하세요"></textarea>
 
-  
+  <h3>댓글 목록</h3>
+  <div id="comments"></div>
+  <button id="toggleButton" onclick="toggleComments()">더 보기</button>
 
-  <!-- 댓글 입력창 -->
-  <h2>댓글</h2>
-  <textarea id="message" placeholder="댓글 입력후 엔터" rows="3" cols="50"></textarea><br>
-  
-  <!-- 좋아요 버튼 -->
-  <div style="margin-top: 20px;">
-    <button id="likeButton">👍 좋아요 <span id="likeCount">0</span></button>
-  </div>
+  <!-- 관리자 로그인 링크 -->
+  <a href="#" id="adminLogin" class="adminLoginLink">관리자 로그인</a>
 
-  <!-- 댓글 목록 -->
-  <div id="comments" style="margin-top: 20px;"></div>
+  <!-- 🔽 Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
-  <!-- 더보기 버튼 -->
-  <button id="toggleButton" onclick="toggleComments()" style="display:none;">더 보기</button>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
-
-  <!-- 사용자 스크립트 -->
+  <!-- 🔽 내 JS 파일 -->
   <script src="script.js"></script>
 </body>
 </html>
