@@ -19,6 +19,12 @@ const photoId = host.split('.')[0];  // 예: 'brilliant-stardust-0ecc28'
 const commentsRef = db.ref('comments/' + photoId);
 const likesRef = db.ref('likes/' + photoId);
 
+// 🔄 좋아요 수 실시간 반영
+likesRef.on('value', snapshot => {
+  const count = snapshot.val() || 0;
+  document.getElementById('likeCount').innerText = count;
+});
+
 // ✅ 익명 로그인
 firebase.auth().signInAnonymously()
   .then(() => {
@@ -99,12 +105,6 @@ function submitComment() {
 
   document.getElementById('message').value = '';
 }
-
-// 🔄 좋아요 수 실시간 반영
-likesRef.on('value', snapshot => {
-  const count = snapshot.val() || 0;
-  document.getElementById('likeCount').innerText = count;
-});
 
 // ⬆️ 좋아요 증가 함수
 function incrementLike() {
