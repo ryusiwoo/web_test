@@ -36,20 +36,33 @@ document.getElementById('message').addEventListener('keydown', function (e) {
   }
 });
 
-// 댓글 출력 함수
+// 댓글 삭제 이벤트 감지
+commentsRef.on('child_removed', (snapshot) => {
+  const commentId = snapshot.key;
+  const commentElement = document.getElementById(commentId); // 해당 ID를 가진 댓글 요소를 찾음
+  if (commentElement) {
+    commentElement.remove(); // 화면에서 댓글 요소 제거
+  }
+});
+
+// 댓글 출력 함수 (수정)
 commentsRef.on('child_added', (snapshot) => {
   const commentData = snapshot.val();
   const commentId = snapshot.key;
   const commentElement = document.createElement('div');
   commentElement.textContent = commentData.message;
+  commentElement.id = commentId; // 댓글 요소에 고유한 ID를 부여
 
-// 관리자 로그인 팝업에서 메시지를 받아 처리
-window.addEventListener('message', function (e) {
-  if (e.data === 'adminLoggedIn') {
-    // 관리자가 로그인되었을 때 처리
-    alert('관리자 로그인 완료');
-    // 이후 필요한 처리를 추가 (예: 댓글 삭제 버튼 활성화)
+  // 관리자일 경우 삭제 버튼 추가
+  // (관리자 확인 로직은 필요에 따라 수정)
+  if (auth.currentUser && auth.currentUser.uid === 'FCiHMPxEBAO7vvZv8SKWzgOxP9s1') {
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '삭제';
+    deleteButton.onclick = () => deleteComment(commentId);
+    commentElement.appendChild(deleteButton);
   }
+
+  document.getElementById('comments').appendChild(commentElement);
 });
 
 
