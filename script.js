@@ -61,8 +61,8 @@ function renderComments() {
   commentsDiv.innerHTML = '';
 
   const commentsToShow = expanded ? allComments : allComments.slice(0, 5);
-
   const currentUser = firebase.auth().currentUser;
+  const likesRef = db.ref('likes/' + photoId);
 
   commentsToShow.forEach((comment, index) => {
     const date = new Date(comment.timestamp);
@@ -81,7 +81,7 @@ function renderComments() {
       <small style="color:gray;">${timeString}</small>
     `;
 
-    // ✅ 관리자 UID라면 삭제 버튼 추가
+    // ✅ 삭제 버튼 (관리자만)
     if (currentUser && currentUser.uid === 'nhVQX70DyKXLtQEYPjshL598iPh2') {
       const deleteBtn = document.createElement('button');
       deleteBtn.innerText = '삭제';
@@ -90,6 +90,26 @@ function renderComments() {
       div.appendChild(deleteBtn);
     }
 
+    // ✅ 좋아요 버튼
+    const likeBtn = document.createElement('button');
+    likeBtn.innerText = '❤️ 좋아요';
+    likeBtn.style.marginTop = '5px';
+    likeBtn.onclick = () => {
+      likesRef.transaction(current => (current || 0) + 1);
+    };
+
+    // ✅ 좋아요 카운트 표시
+    const likeCount = document.createElement('div');
+    likeCount.style.color = 'tomato';
+    likeCount.style.marginTop = '5px';
+
+    likesRef.on('value', snapshot => {
+      likeCount.innerText = `❤️ 좋아요: ${snapshot.val() || 0}`;
+    });
+
+    div.appendChild(likeBtn);
+    div.appendChild(likeCount);
+
     commentsDiv.appendChild(div);
   });
 
@@ -97,6 +117,7 @@ function renderComments() {
   toggleButton.style.display = allComments.length > 5 ? 'block' : 'none';
   toggleButton.innerText = expanded ? '간단히 보기' : '더 보기';
 }
+
 
 
 // 🔀 더 보기 / 간단히 보기
