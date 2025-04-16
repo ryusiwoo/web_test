@@ -62,7 +62,9 @@ function renderComments() {
 
   const commentsToShow = expanded ? allComments : allComments.slice(0, 5);
 
-  commentsToShow.forEach(comment => {
+  const currentUser = firebase.auth().currentUser;
+
+  commentsToShow.forEach((comment, index) => {
     const date = new Date(comment.timestamp);
     const timeString = date.toLocaleString('ko-KR', {
       year: 'numeric',
@@ -79,12 +81,12 @@ function renderComments() {
       <small style="color:gray;">${timeString}</small>
     `;
 
-    // 🗑️ 관리자일 경우 삭제 버튼 추가
-    if (currentUser && currentUser.uid === ADMIN_UID) {
+    // ✅ 관리자 UID라면 삭제 버튼 추가
+    if (currentUser && currentUser.uid === 'nhVQX70DyKXLtQEYPjshL598iPh2') {
       const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = '삭제';
+      deleteBtn.innerText = '삭제';
       deleteBtn.style.marginTop = '5px';
-      deleteBtn.onclick = () => deleteComment(comment.id);
+      deleteBtn.onclick = () => deleteComment(comment.message, comment.timestamp);
       div.appendChild(deleteBtn);
     }
 
@@ -95,6 +97,7 @@ function renderComments() {
   toggleButton.style.display = allComments.length > 5 ? 'block' : 'none';
   toggleButton.innerText = expanded ? '간단히 보기' : '더 보기';
 }
+
 
 // 🔀 더 보기 / 간단히 보기
 function toggleComments() {
@@ -121,15 +124,23 @@ function submitComment() {
 }
 
 // 🗑️ 댓글 삭제 (관리자만 가능)
-function deleteComment(commentId) {
-  if (currentUser && currentUser.uid === ADMIN_UID) {
-    commentsRef.child(commentId).remove()
-      .then(() => console.log("댓글 삭제 완료"))
-      .catch(error => console.error("댓글 삭제 실패:", error));
-  } else {
-    alert("관리자만 댓글을 삭제할 수 있습니다.");
-  }
+function deleteComment(message, timestamp) {
+  if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) return;
+
+  commentsRef.once('value', snapshot => {
+    const comments = snapshot.val();
+    for (let key in comments) {
+      const comment = comments[key];
+      if (comment.message === message && comment.timestamp === timestamp) {
+        commentsRef.child(key).remove()
+          .then(() => console.log('댓글 삭제 완료'))
+          .catch(err => console.error('삭제 실패:', err));
+        break;
+      }
+    }
+  });
 }
+
 
 // ⌨️ Enter 키로 댓글 등록
 document.getElementById('message').addEventListener('keydown', function(event) {
