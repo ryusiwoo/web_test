@@ -154,3 +154,19 @@ function signInWithEmailPassword() {
       alert("로그인 실패: " + error.message);
     });
 }
+
+
+// 좋아요 기능
+const likesRef = db.ref('likes/' + photoId);
+
+// 좋아요 수 실시간 반영
+likesRef.on('value', snapshot => {
+  const count = snapshot.val() || 0;
+  document.getElementById('likeCount').innerText = count;
+});
+
+// 좋아요 누르기 (중복 방지 없이 단순 증가 방식)
+function like() {
+  likesRef.transaction(current => (current || 0) + 1);
+}
+
